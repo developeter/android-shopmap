@@ -8,16 +8,20 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity{
 	
 	
 	private int listsize = 0;
 	private TextView testText;
+	private Button GoToMaps;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -27,11 +31,23 @@ public class MainActivity extends Activity {
 		testObject.put("foo", "bar");
 		testObject.saveInBackground();*/
 		testText = (TextView)findViewById(R.id.textTest);
+		GoToMaps = (Button)findViewById(R.id.btnOpenMap);
+		
+		GoToMaps.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent add = new Intent(MainActivity.this, MapActivity.class);
+				startActivity(add);				
+			}
+		});
 		
 		ParseQuery<ParseObject> query = ParseQuery.getQuery("attivita");
 		query.whereEqualTo("categoria_principale", "negozio");
 		query.findInBackground(new FindCallback<ParseObject>() {
 		 
+			
+			
 			public void done(List<ParseObject> listNegozi, ParseException e) {
 		        if (e == null) {
 		        	listsize = listNegozi.size();
@@ -40,11 +56,10 @@ public class MainActivity extends Activity {
 		            Log.d("score", "Error: " + e.getMessage());
 		        }
 		    }
-
 		});
 		
 		
-		}
+	}
 	
 	public void setText(int value){
 			
