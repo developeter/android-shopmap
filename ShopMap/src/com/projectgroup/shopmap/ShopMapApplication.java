@@ -8,7 +8,6 @@ public class ShopMapApplication extends Application {
 
 	@Override
 	public void onCreate() {
-		// TODO Auto-generated method stub
 		super.onCreate();
 		// Enable Local Datastore.
 		Parse.enableLocalDatastore(this);
