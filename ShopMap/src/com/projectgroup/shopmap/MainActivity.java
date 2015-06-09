@@ -43,21 +43,24 @@ public class MainActivity extends Activity{
 		});
 		
 		ParseQuery<ParseObject> query = ParseQuery.getQuery("attivita");
+		List<ParseObject> objects = query.find();
+		
+		ParseObject.pinAllInBackground(objects);
+		
 		query.whereEqualTo("categoria_principale", "negozio");
+		query.fromLocalDatastore();
 		query.findInBackground(new FindCallback<ParseObject>() {
-		 
-			
 			
 			public void done(List<ParseObject> listNegozi, ParseException e) {
 		        if (e == null) {
 		        	listsize = listNegozi.size();
-		        	setText(listsize);
+		        	testText.setText(listsize);
 		        } else {
-		            Log.d("score", "Error: " + e.getMessage());
+		        	final String msg = "Error fetching data: " + e.getMessage();
+		            testText.setText(msg);
 		        }
 		    }
 		});
-		
 		
 	}
 	
