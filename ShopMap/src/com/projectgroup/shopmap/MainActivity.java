@@ -9,11 +9,13 @@ import com.parse.ParseQuery;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 public class MainActivity extends Activity{
@@ -22,6 +24,9 @@ public class MainActivity extends Activity{
 	private int listsize = 0;
 	private TextView testText;
 	private Button GoToMaps;
+	private Location lastLocation;
+	private Location currentLocation;
+	  
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -37,6 +42,13 @@ public class MainActivity extends Activity{
 			
 			@Override
 			public void onClick(View v) {
+				  
+				Location myLoc = (currentLocation == null) ? lastLocation : currentLocation;
+			      if (myLoc == null) {
+			        Toast.makeText(MainActivity.this,
+			            "Prova ancora se la posizione non appare", Toast.LENGTH_LONG).show();
+			        return;
+			      }
 				Intent add = new Intent(MainActivity.this, MapActivity.class);
 				startActivity(add);				
 			}
