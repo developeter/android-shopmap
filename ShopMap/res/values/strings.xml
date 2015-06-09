@@ -4,5 +4,8 @@
     <string name="app_name">ShopMap</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_gallery">MainActivity</string>
+    <string name="title_activity_activity_dettagli">ActivityDettagli</string>
+    <string name="title_activity_activity_lista">ActivityLista</string>
 
 </resources>
