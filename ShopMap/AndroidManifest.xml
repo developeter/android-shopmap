@@ -54,6 +54,10 @@
             android:name=".ActivityLista"
             android:label="@string/title_activity_activity_lista" >
         </activity>
+        <activity
+            android:name=".ProvaImmagine"
+            android:label="@string/title_activity_prova_immagine" >
+        </activity>
     </application>
 
 </manifest>

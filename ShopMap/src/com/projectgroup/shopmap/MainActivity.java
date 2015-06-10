@@ -22,6 +22,7 @@ public class MainActivity extends Activity{
 	private int listsize = 0;
 	private TextView testText;
 	private Button GoToMaps;
+	private Button gallery;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -32,6 +33,7 @@ public class MainActivity extends Activity{
 		testObject.saveInBackground();*/
 		testText = (TextView)findViewById(R.id.textTest);
 		GoToMaps = (Button)findViewById(R.id.btnOpenMap);
+		
 		
 		GoToMaps.setOnClickListener(new View.OnClickListener() {
 			
@@ -59,10 +61,20 @@ public class MainActivity extends Activity{
 		});
 		
 		
+		gallery = (Button) findViewById(R.id.btn_gallery);
+		gallery.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent gal = new Intent(MainActivity.this, GalleryActivity.class);
+				startActivity(gal);				
+			}
+		});
+		
+		
 	}
 	
-	public void setText(int value){
-			
+	public void setText(int value){	
 		testText.setText(""+value);
 	}
 
