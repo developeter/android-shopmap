@@ -14,9 +14,7 @@ public class ProvaImmagine extends Activity {
             setContentView(R.layout.testimage);  
             
             Bundle bundle = getIntent().getExtras();
-            
-            String url = bundle.getString("url");
-            
+            String url = bundle.getString("url"); 
             ImageView imgView =(ImageView)findViewById(R.id.img);
             Picasso.with(getBaseContext()).load(url).into(imgView);
             

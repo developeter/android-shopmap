@@ -38,6 +38,18 @@ public class GalleryActivity extends Activity{
 			}
 		});
 		
+		img2.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Bundle bundle = new Bundle();
+				bundle.putString("url", url);
+				Intent img = new Intent(GalleryActivity.this, ProvaImmagine.class);
+				img.putExtras(bundle);
+				startActivity(img);
+			}
+		});
+		
 		
 	}
 
