@@ -1,8 +1,10 @@
 package com.projectgroup.shopmap;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.parse.FindCallback;
+import com.parse.GetCallback;
 import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
@@ -10,6 +12,8 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
 import android.app.Application;
+import android.location.Location;
+import android.util.Log;
 
 public class ShopMapApplication extends Application {
 
@@ -22,18 +26,57 @@ public class ShopMapApplication extends Application {
 		Parse.initialize(this, "6kKpkOx9HzE6dJ2cR5JSFgNCwyIhLtTcSayipPNu", "cVg9BkGbVivvdy8Fxo14ERX7rfpkxdYcgdDhID0h");
 	}
 	
-	public List<ParseObject> getParseObjects(){
+	
+	public ArrayList<String> getPhotosById(String Id) {
 		
-		double lat = 13.1618;	//latitudine da aggiornare con currentposition
-		double lon = 46.3329;	//longitudine idem
+		final ArrayList<String> photos = new ArrayList<String>();
 		
-		ParseGeoPoint userposition = new ParseGeoPoint(lat, lon);
 		ParseQuery<ParseObject> query = ParseQuery.getQuery("attivita");
-		double maxDistance = 20;
+		query.fromLocalDatastore();
+		query.getInBackground(Id, new GetCallback<ParseObject>() {
+		  public void done(ParseObject object, ParseException e) {
+		    if (e == null) {
+		    	
+		    	try {
+					object.pin();
+				} catch (ParseException e1) {
+					Log.d("errore", "Impossibile salvare sul database: " + e1.getMessage());
+				}
+		    	
+		    	String img1 = object.getString("image1");
+		    	photos.add(img1);
+		    	String img2 = object.getString("image2");
+		    	photos.add(img2);
+		    	String img3 = object.getString("image3");
+		    	photos.add(img3);
+		    	String img4 = object.getString("image4");
+		    	photos.add(img4);
+		    	
+		    } else {
+		    	Log.d("errore", "Errore nel download: " + e.getMessage());
+		    }
+		  }
+		});
+		
+		return photos;
+	}
+	
+	
+	
+	
+	public ArrayList<ParseObject> getShopsByLocation(Location user){
+		
+		final ArrayList<ParseObject> result = new ArrayList<ParseObject>();
+		
+		final double lat = user.getLatitude();
+		final double lon = user.getLongitude();
+		final ParseGeoPoint userposition = new ParseGeoPoint(lat, lon);
+		final double maxDistance = 20;
+		
+		ParseQuery<ParseObject> query = ParseQuery.getQuery("attivita");
 		
 		query.whereEqualTo("categoria_principale", "negozio");
-		query.fromLocalDatastore();
-		query.whereWithinKilometers("posizione", userposition, maxDistance);	//filtro in base alla posizione
+		query.whereWithinKilometers("posizione", userposition, maxDistance);
 		query.findInBackground(new FindCallback<ParseObject>() {
 			
 			public void done(List<ParseObject> listNegozi, ParseException e) {
@@ -42,28 +85,58 @@ public class ShopMapApplication extends Application {
 		        	ParseObject.pinAllInBackground(listNegozi);
 		        	listNegozi.iterator();
 		        	for (ParseObject object:listNegozi) {
-		        		inflateItemsList(object);
+		        		object.remove("descrizione");
+		        		object.remove("immagini");
+		        		object.remove("createdAt");
+		        		object.remove("updatedAt");
+		        		object.remove("ACL");
+		        		ParseGeoPoint pos = object.getParseGeoPoint("posizione");
+		        		double dist = pos.distanceInKilometersTo(userposition);
+		        		object.add("distanza", dist);
+		        		result.add(object);
 		        	};
 		        	
 		        } else {
-		        	final String msg = "Errore nel download: " + e.getMessage();
-		            testText.setText(msg);
+		        	Log.d("errore", "Errore nel download: " + e.getMessage());
 		        }
 		    }
-
-			private void inflateItemsList(ParseObject object) {
-				
-				String categoria_principale = object.getString("categoria_principale");
-				String categoria_secondaria = object.getString("categoria_secondaria");
-				String nome_attivita = object.getString("nome_attivita");
-				String descrizione = object.getString("descrizione");
-				String citta = object.getString("citta");
-				ParseGeoPoint position = object.getParseGeoPoint("posizione");
-				
-				
-			}
-		});
-		return null;
+		});	
+		
+		return result;
 	}
-
+	
+	
+	
+	
+	public ParseObject getDetailById(String Id){
+				
+		ParseObject result = new ParseObject("attivita");
+		
+		ParseQuery<ParseObject> query = ParseQuery.getQuery("attivita");
+		query.fromLocalDatastore();
+		query.getInBackground(Id, new GetCallback<ParseObject>() {
+		  public void done(ParseObject object, ParseException e) {
+		    if (e == null) {
+		    	
+		    	try {
+					object.pin();
+				} catch (ParseException e1) {
+					Log.d("errore", "Impossibile salvare sul database: " + e1.getMessage());
+				}
+		    	object.remove("immagini");
+        		object.remove("createdAt");
+        		object.remove("updatedAt");
+        		object.remove("ACL");
+		    	
+		    } else {
+		    	Log.d("errore", "Errore nel download: " + e.getMessage());
+		    }
+		  }
+		});
+		
+		return result;
+		
+	}
+	
+	
 }
