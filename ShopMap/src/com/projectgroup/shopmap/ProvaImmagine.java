@@ -7,8 +7,8 @@ import android.os.Bundle;
 import android.widget.ImageView;
 
 public class ProvaImmagine extends Activity {
-    @Override
     
+	@Override
     public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.testimage);  
