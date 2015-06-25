@@ -23,17 +23,15 @@ public class MainActivity extends Activity{
 	private TextView testText;
 	private Button GoToMaps;
 	private Button gallery;
+	private Button lista;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
-		/*ParseObject testObject = new ParseObject("TestObject");
-		testObject.put("foo", "bar");
-		testObject.saveInBackground();*/
 		testText = (TextView)findViewById(R.id.textTest);
 		GoToMaps = (Button)findViewById(R.id.btnOpenMap);
-		
+		lista = (Button)findViewById(R.id.btn_lista);
 		
 		GoToMaps.setOnClickListener(new View.OnClickListener() {
 			
@@ -47,8 +45,6 @@ public class MainActivity extends Activity{
 		ParseQuery<ParseObject> query = ParseQuery.getQuery("attivita");
 		query.whereEqualTo("categoria_principale", "negozio");
 		query.findInBackground(new FindCallback<ParseObject>() {
-		 
-			
 			
 			public void done(List<ParseObject> listNegozi, ParseException e) {
 		        if (e == null) {
@@ -60,7 +56,6 @@ public class MainActivity extends Activity{
 		    }
 		});
 		
-		
 		gallery = (Button) findViewById(R.id.btn_gallery);
 		gallery.setOnClickListener(new View.OnClickListener() {
 			
@@ -71,7 +66,15 @@ public class MainActivity extends Activity{
 			}
 		});
 		
-		
+		lista.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				
+				Intent open = new Intent(MainActivity.this, ActivityLista.class);
+				startActivity(open);
+			}
+		});
 	}
 	
 	public void setText(int value){	
