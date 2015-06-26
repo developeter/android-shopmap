@@ -1,14 +1,22 @@
 package com.projectgroup.shopmap;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import android.app.Activity;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -21,22 +29,30 @@ import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseGeoPoint;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 
 public class MapActivity extends Activity implements OnMapReadyCallback {
 
 	private static final long LOCATION_REFRESH_DISTANCE = 1;
 	private static final long LOCATION_REFRESH_TIME = 1000;
 	private static final int GEOFENCE_RADIUS_IN_METERS = 200;
+	private String SearchCategory = "negozi";
 
 	private Location myLocation;
 	// private MapFragment mapFragment;
-	double lat, lon;
+	double latitude, longitude;
 	OnMapReadyCallback callback;
 	GoogleMapOptions options;
 	Geofence fence;
 	protected ArrayList<Geofence> mGeofenceList;
+	protected List<ParseObject> mParseObjectList;
 	// private GoogleMap mMap;
 	double myLatitude, myLongitude;
 
@@ -68,20 +84,67 @@ public class MapActivity extends Activity implements OnMapReadyCallback {
 	}
 
 	@Override
-	public void onMapReady(GoogleMap map) {
+	public void onMapReady(final GoogleMap map) {
+		// Location testLocation = new Location("");
+		// testLocation.setLatitude(latTest);
+		// testLocation.setLongitude(lonTest);
+
+		// mParseObjectList =
+		// ShopMapApplication.getShopsByLocation(testLocation);
+		map.clear();
+		double lat = 45.958955;
+		double lon = 12.666716;
 
 		map.setMyLocationEnabled(true);
 
+		final ParseGeoPoint userposition = new ParseGeoPoint(lat, lon);
+		final double maxDistance = 20;
+
+		ParseQuery<ParseObject> query = ParseQuery.getQuery("attivita");
+
+		query.whereEqualTo("categoria_principale", "negozio");
+		query.whereWithinKilometers("posizione", userposition, maxDistance);
+
+		query.findInBackground(new FindCallback<ParseObject>() {
+
+			public void done(List<ParseObject> listNegozi, ParseException e) {
+				if (e == null) {
+
+					ParseObject.pinAllInBackground(listNegozi);
+					listNegozi.iterator();
+					for (ParseObject object : listNegozi) {
+						object.remove("descrizione");
+						object.remove("immagini");
+						object.remove("createdAt");
+						object.remove("updatedAt");
+						object.remove("ACL");
+						ParseGeoPoint pos = object
+								.getParseGeoPoint("posizione");
+						double dist = pos.distanceInKilometersTo(userposition);
+						object.add("distanza", dist);
+
+						// listNegozi.add(object);
+					}
+					;
+
+					mParseObjectList = listNegozi;
+
+					ParsePointsOnMap(map, mParseObjectList);
+				} else {
+					Log.d("errore", "Errore nel download: " + e.getMessage());
+				}
+			}
+		});
+
 		// makerFactory Test
-		double lonTest = 45.9589554;
-		double latTest = 12.6667163;
 
-		for (int i = 0; i < 50; i++) {
-
-			MakerFactory(map, lonTest, latTest, 0);
-			lonTest = lonTest + 0.0011100;
-			latTest = latTest + 0.0011000;
-		}
+		// testMarkerMap
+		/*
+		 * for (int i = 0; i < 50; i++) {
+		 * 
+		 * MakerFactory(map, lonTest, latTest, 0); lonTest = lonTest +
+		 * 0.0011100; latTest = latTest + 0.0011000; }
+		 */
 
 		/*
 		 * LatLng newLatLng = new LatLng(myLocation.getLatitude(),
@@ -134,13 +197,29 @@ public class MapActivity extends Activity implements OnMapReadyCallback {
 		}
 	};
 
-	// without cluster
+	// with geofence
 	private void MakerFactory(GoogleMap map, double lat, double lan,
-			int idCategory) {
+			int idCategory, String tTitle) {
 
-		String tempTitle = "";
-		map.addMarker(new MarkerOptions().position(new LatLng(lat, lan)).title(
-				tempTitle));
+		LatLng newLatLng = new LatLng(lat, lan);
+		map.addMarker(new MarkerOptions().position(newLatLng).title(tTitle));
+		buildGeofence(tTitle, map, newLatLng);
+	}
+
+	// convert parsobjects into makers
+	private void ParsePointsOnMap(GoogleMap map, List<ParseObject> ParseList) {
+
+		for (ParseObject pObject : ParseList) {
+
+			ParseGeoPoint pGeoP = pObject.getParseGeoPoint("posizione");
+			double lat = pGeoP.getLatitude();
+			double lan = pGeoP.getLongitude();
+			// test per category
+			int idCategory = 0;
+			String tTitle = pObject.getString("nome_attivita");
+			MakerFactory(map, lat, lan, idCategory, tTitle);
+
+		}
 	}
 
 	// actionbar filter
@@ -165,6 +244,51 @@ public class MapActivity extends Activity implements OnMapReadyCallback {
 		default:
 			return super.onOptionsItemSelected(item);
 		}
+	}
+
+	public void SendNotification(int mId, String notifyTitle, String notifyText) {
+
+		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
+				this).setSmallIcon(R.drawable.ic_launcher)
+				.setContentTitle(notifyTitle + " num " + mId)
+				.setContentText(notifyText);
+
+		Intent resultIntent = new Intent(this, MainActivity.class);
+
+		TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+
+		stackBuilder.addParentStack(MainActivity.class);
+
+		stackBuilder.addNextIntent(resultIntent);
+		PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0,
+				PendingIntent.FLAG_UPDATE_CURRENT);
+		mBuilder.setContentIntent(resultPendingIntent);
+		NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+		mNotificationManager.notify(mId, mBuilder.build());
+	}
+
+	private void buildGeofence(String title, GoogleMap map, LatLng geofencePoint) {
+		long NEVER_EXPIRE = -1;
+		int GEOFENCE_TRANSITION_ENTER = 1;
+		int radius = 250;
+		String requestId = title;
+		Geofence.Builder geofence = new Geofence.Builder();
+		geofence.setCircularRegion(geofencePoint.latitude,
+				geofencePoint.longitude, radius);
+		geofence.setRequestId(requestId);
+		geofence.setExpirationDuration(NEVER_EXPIRE);
+		geofence.setTransitionTypes(GEOFENCE_TRANSITION_ENTER);
+		geofence.setNotificationResponsiveness(0);
+		geofence.build();
+		CircleOptions circleOptions = new CircleOptions();
+		circleOptions.center(geofencePoint);
+		circleOptions.radius(radius);
+		circleOptions.strokeColor(Color.BLACK);
+		circleOptions.fillColor(0x30ff0000);
+		circleOptions.strokeWidth(2);
+		map.addCircle(circleOptions);
+
 	}
 
 	// Cluster e co

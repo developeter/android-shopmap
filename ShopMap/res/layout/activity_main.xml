@@ -14,28 +14,12 @@
                   android:id="@+id/btnOpenMap"
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
-                  android:text="Open the map" />
-
-              <TextView
-                  android:id="@+id/txt1"
-                  android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:gravity="top|center"
-                  android:text="N. Negozi DB"/>
+                  android:text="Map" />
               
-              <TextView
-                  android:id="@+id/textTest"
-                  android:layout_width="wrap_content"
+               <Button
+                  android:id="@+id/btnOpenList"
+                  android:layout_width="match_parent"
                   android:layout_height="wrap_content"
-                  android:gravity="top|center"
-                  android:text="Dati"
-                  android:textAppearance="?android:attr/textAppearanceLarge" />
-              
-               <TextView
-                  android:id="@+id/txt2"
-                  android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:gravity="top|center"
-                  android:text="N. attrazioni DB"/>
+                  android:text="List" />
 
           </LinearLayout>

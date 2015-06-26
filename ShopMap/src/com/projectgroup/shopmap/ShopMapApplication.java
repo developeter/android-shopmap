@@ -62,7 +62,8 @@ public class ShopMapApplication extends Application {
 		return photos;
 	}
 
-	public ArrayList<ParseObject> getShopsByLocation(Location user) {
+	// aggiunto il static
+	public static ArrayList<ParseObject> getShopsByLocation(Location user) {
 
 		final ArrayList<ParseObject> result = new ArrayList<ParseObject>();
 
@@ -73,8 +74,9 @@ public class ShopMapApplication extends Application {
 
 		ParseQuery<ParseObject> query = ParseQuery.getQuery("attivita");
 
-		query.whereEqualTo("categoria_principale", "negozio");
-		query.whereWithinKilometers("posizione", userposition, maxDistance);
+		// query.whereEqualTo("categoria_principale", "negozio");
+		// query.whereWithinKilometers("posizione", userposition, maxDistance);
+		// query.findInBackground(new FindCallback<ParseObject>() {
 		query.findInBackground(new FindCallback<ParseObject>() {
 
 			public void done(List<ParseObject> listNegozi, ParseException e) {
@@ -83,15 +85,17 @@ public class ShopMapApplication extends Application {
 					ParseObject.pinAllInBackground(listNegozi);
 					listNegozi.iterator();
 					for (ParseObject object : listNegozi) {
-						object.remove("descrizione");
-						object.remove("immagini");
-						object.remove("createdAt");
-						object.remove("updatedAt");
-						object.remove("ACL");
-						ParseGeoPoint pos = object
-								.getParseGeoPoint("posizione");
-						double dist = pos.distanceInKilometersTo(userposition);
-						object.add("distanza", dist);
+						// object.remove("descrizione");
+						// object.remove("immagini");
+						// object.remove("createdAt");
+						// object.remove("updatedAt");
+						// object.remove("ACL");
+						// ParseGeoPoint pos = object
+						// .getParseGeoPoint("posizione");
+						// double dist =
+						// pos.distanceInKilometersTo(userposition);
+						// object.add("distanza", dist);
+
 						result.add(object);
 					}
 					;
