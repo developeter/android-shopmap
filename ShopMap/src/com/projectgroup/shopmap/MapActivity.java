@@ -1,6 +1,7 @@
 package com.projectgroup.shopmap;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import android.app.Activity;
@@ -25,12 +26,14 @@ import android.widget.Toast;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -46,6 +49,8 @@ public class MapActivity extends Activity implements OnMapReadyCallback {
 	private String SearchCategory = "negozi";
 
 	private Location myLocation;
+
+	private HashMap<Marker, ParseObject> mHashMap;
 	// private MapFragment mapFragment;
 	double latitude, longitude;
 	OnMapReadyCallback callback;
@@ -91,9 +96,10 @@ public class MapActivity extends Activity implements OnMapReadyCallback {
 
 		// mParseObjectList =
 		// ShopMapApplication.getShopsByLocation(testLocation);
-		map.clear();
-		double lat = 45.958955;
-		double lon = 12.666716;
+		// map.clear();
+
+		double lat = myLocation.getLatitude();
+		double lon = myLocation.getLongitude();
 
 		map.setMyLocationEnabled(true);
 
@@ -151,6 +157,20 @@ public class MapActivity extends Activity implements OnMapReadyCallback {
 		 * myLocation.getLongitude()); CenterCamera(map, newLatLng);
 		 */
 
+		map.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
+
+			@Override
+			public void onInfoWindowClick(Marker marker) {
+
+				ParseObject pObject = mHashMap.get(marker);
+				String title = pObject.getString("0");
+				Intent intent = new Intent(MapActivity.this, MainActivity.class);
+				intent.putExtra("MARKER_TITLE", title);
+				startActivity(intent);
+
+			}
+		});
+
 	}
 
 	// metodo generazione toast
@@ -197,18 +217,20 @@ public class MapActivity extends Activity implements OnMapReadyCallback {
 		}
 	};
 
-	// with geofence
-	private void MakerFactory(GoogleMap map, double lat, double lan,
-			int idCategory, String tTitle) {
+	/*
+	 * // with geofence private void MakerFactory(GoogleMap map, double lat,
+	 * double lan, int idCategory, String tTitle, String mCategory) {
+	 * 
+	 * LatLng newLatLng = new LatLng(lat, lan); Marker tempMaker =
+	 * map.addMarker(new MarkerOptions()
+	 * .position(newLatLng).title(tTitle).snippet(mCategory));
+	 * tempMaker.showInfoWindow(); buildGeofence(tTitle, map, newLatLng); }
+	 */
 
-		LatLng newLatLng = new LatLng(lat, lan);
-		map.addMarker(new MarkerOptions().position(newLatLng).title(tTitle));
-		buildGeofence(tTitle, map, newLatLng);
-	}
-
-	// convert parsobjects into makers
+	// convert parsobjects into makers and add these on the map
 	private void ParsePointsOnMap(GoogleMap map, List<ParseObject> ParseList) {
 
+		mHashMap = new HashMap<Marker, ParseObject>();
 		for (ParseObject pObject : ParseList) {
 
 			ParseGeoPoint pGeoP = pObject.getParseGeoPoint("posizione");
@@ -217,8 +239,14 @@ public class MapActivity extends Activity implements OnMapReadyCallback {
 			// test per category
 			int idCategory = 0;
 			String tTitle = pObject.getString("nome_attivita");
-			MakerFactory(map, lat, lan, idCategory, tTitle);
+			String mCategory = pObject.getString("categoria_secondaria");
 
+			LatLng newLatLng = new LatLng(lat, lan);
+			Marker tempMaker = map.addMarker(new MarkerOptions()
+					.position(newLatLng).title(tTitle).snippet(mCategory));
+			tempMaker.showInfoWindow();
+			buildGeofence(tTitle, map, newLatLng);
+			mHashMap.put(tempMaker, pObject);
 		}
 	}
 
@@ -237,7 +265,7 @@ public class MapActivity extends Activity implements OnMapReadyCallback {
 		switch (item.getItemId()) {
 		case R.id.action_filter:
 			// openFilter();
-			ToastMaker("PREMUTO");
+			ToastMaker("Update to PremiumAccount to use this feature");
 			return true;
 		case R.id.action_settings:
 			return true;
@@ -289,6 +317,24 @@ public class MapActivity extends Activity implements OnMapReadyCallback {
 		circleOptions.strokeWidth(2);
 		map.addCircle(circleOptions);
 
+	}
+
+	@Override
+	protected void onStart() {
+		// TODO Auto-generated method stub
+		super.onStart();
+	}
+
+	@Override
+	protected void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+	}
+
+	@Override
+	protected void onPause() {
+		// TODO Auto-generated method stub
+		super.onPause();
 	}
 
 	// Cluster e co
