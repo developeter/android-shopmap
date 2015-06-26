@@ -22,4 +22,23 @@
                   android:layout_height="wrap_content"
                   android:text="List" />
 
+               <LinearLayout
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:layout_gravity="bottom" >
+
+                   <Button
+                       android:id="@+id/btn_gallery"
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content"
+                       android:text="Gallery" />
+
+               </LinearLayout>
+
+               <Button
+                   android:id="@+id/btn_lista"
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:text="Lista" />
+
           </LinearLayout>
