@@ -32,7 +32,7 @@ public class MainActivity extends Activity {
 		 */
 
 		GoToMaps = (Button) findViewById(R.id.btnOpenMap);
-		GoToList = (Button) findViewById(R.id.btnOpenMap);
+		GoToList = (Button) findViewById(R.id.btnOpenList);
 
 		GoToMaps.setOnClickListener(new View.OnClickListener() {
 
@@ -45,14 +45,14 @@ public class MainActivity extends Activity {
 			}
 		});
 
-		GoToMaps.setOnClickListener(new View.OnClickListener() {
+		GoToList.setOnClickListener(new View.OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
-				Intent inMapAct = new Intent(MainActivity.this,
-						MapActivity.class);
+				Intent inListAct = new Intent(MainActivity.this,
+						ActivityLista.class);
 
-				startActivity(inMapAct);
+				startActivity(inListAct);
 			}
 		});
 

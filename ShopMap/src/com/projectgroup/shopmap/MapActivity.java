@@ -44,7 +44,7 @@ import com.parse.ParseQuery;
 public class MapActivity extends Activity implements OnMapReadyCallback {
 
 	private static final long LOCATION_REFRESH_DISTANCE = 1;
-	private static final long LOCATION_REFRESH_TIME = 1000;
+	private static final long LOCATION_REFRESH_TIME = 5000;
 	private static final int GEOFENCE_RADIUS_IN_METERS = 200;
 	private String SearchCategory = "negozi";
 
@@ -139,7 +139,9 @@ public class MapActivity extends Activity implements OnMapReadyCallback {
 				} else {
 					Log.d("errore", "Errore nel download: " + e.getMessage());
 				}
+
 			}
+
 		});
 
 		// makerFactory Test
@@ -157,15 +159,20 @@ public class MapActivity extends Activity implements OnMapReadyCallback {
 		 * myLocation.getLongitude()); CenterCamera(map, newLatLng);
 		 */
 
-		map.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
+		LatLng latlng = new LatLng(lat, lon);
+		CenterCamera(map, latlng);
 
+		map.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
 			@Override
 			public void onInfoWindowClick(Marker marker) {
 
 				ParseObject pObject = mHashMap.get(marker);
-				String title = pObject.getString("0");
-				Intent intent = new Intent(MapActivity.this, MainActivity.class);
-				intent.putExtra("MARKER_TITLE", title);
+				String data = pObject.getString("0");
+				Bundle bundle = new Bundle();
+				Intent intent = new Intent(MapActivity.this,
+						ActivityDettaglio.class);
+				bundle.putString("NOME", data);
+				intent.putExtras(bundle);
 				startActivity(intent);
 
 			}
@@ -174,7 +181,7 @@ public class MapActivity extends Activity implements OnMapReadyCallback {
 	}
 
 	// metodo generazione toast
-	private void ToastMaker(String message) {
+	public void ToastMaker(String message) {
 		assert (message != null);
 		Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
 	}
@@ -183,7 +190,7 @@ public class MapActivity extends Activity implements OnMapReadyCallback {
 	public void CenterCamera(GoogleMap map, LatLng latlng) {
 
 		CameraPosition cameraPosition = new CameraPosition.Builder()
-				.target(latlng).zoom(17).bearing(90) // orientation camera to
+				.target(latlng).zoom(10).bearing(90) // orientation camera to
 														// east
 				.tilt(30) // camera to degrees
 				.build(); // Creates CameraPosition from builder
