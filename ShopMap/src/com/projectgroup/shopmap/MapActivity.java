@@ -363,6 +363,78 @@ public class MapActivity extends Activity implements OnMapReadyCallback {
 		super.onStart();
 	}
 
+	// motion camera
+	public void CenterCamera(GoogleMap map, LatLng latlng) {
+
+		CameraPosition cameraPosition = new CameraPosition.Builder()
+				.target(latlng).zoom(10).bearing(90) // orientation camera to
+														// east
+				.tilt(30) // camera to degrees
+				.build(); // Creates CameraPosition from builder
+		map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+	}
+
+	// locationListener
+	private final LocationListener mLocationListener = new LocationListener() {
+		@Override
+		public void onLocationChanged(final Location location) {
+			// your code here
+			ToastMaker("onLocationChanged");
+		}
+
+		@Override
+		public void onStatusChanged(String provider, int status, Bundle extras) {
+			// TODO Auto-generated method stub
+			ToastMaker("onStatusChanged");
+		}
+
+		@Override
+		public void onProviderEnabled(String provider) {
+			// TODO Auto-generated method stub
+			ToastMaker("GPS ATTIVATO");
+		}
+
+		@Override
+		public void onProviderDisabled(String provider) {
+			// TODO Auto-generated method stub
+			ToastMaker("GPS DISATTIVATO");
+		}
+	};
+
+	/*
+	 * // with geofence private void MakerFactory(GoogleMap map, double lat,
+	 * double lan, int idCategory, String tTitle, String mCategory) {
+	 * 
+	 * LatLng newLatLng = new LatLng(lat, lan); Marker tempMaker =
+	 * map.addMarker(new MarkerOptions()
+	 * .position(newLatLng).title(tTitle).snippet(mCategory));
+	 * tempMaker.showInfoWindow(); buildGeofence(tTitle, map, newLatLng); }
+	 */
+
+	// convert parsobjects into makers and add these on the map
+	private void ParsePointsOnMap(GoogleMap map, List<ParseObject> ParseList) {
+
+		mHashMap = new HashMap<Marker, ParseObject>();
+		for (ParseObject pObject : ParseList) {
+
+			ParseGeoPoint pGeoP = pObject.getParseGeoPoint("posizione");
+			double lat = pGeoP.getLatitude();
+			double lan = pGeoP.getLongitude();
+			// test per category
+			int idCategory = 0;
+			String tTitle = pObject.getString("nome_attivita");
+			String mCategory = pObject.getString("categoria_secondaria");
+
+			LatLng newLatLng = new LatLng(lat, lan);
+			Marker tempMaker = map.addMarker(new MarkerOptions()
+					.position(newLatLng).title(tTitle).snippet(mCategory));
+			tempMaker.showInfoWindow();
+			buildGeofence(tTitle, map, newLatLng);
+			mHashMap.put(tempMaker, pObject);
+		}
+	}
+
+	// actionbar filter
 	@Override
 	protected void onResume() {
 		// TODO Auto-generated method stub

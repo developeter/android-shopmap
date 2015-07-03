@@ -1,9 +1,13 @@
 package com.projectgroup.shopmap;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.parse.GetCallback;
 import com.parse.ParseException;
@@ -36,6 +40,17 @@ public class ActivityDettaglio extends Activity {
 			// Toast.makeText(this, "Bundel vuoto", Toast.LENGTH_SHORT).show();
 		}
 
+		Button ButtonGallery = (Button) findViewById(R.id.btn_gallery);
+		ButtonGallery.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				Bundle newbundle = new Bundle();
+				newbundle.putString("NOME", nome_string);
+				Intent intent = new Intent(ActivityDettaglio.this, GalleryActivity.class);
+				intent.putExtras(newbundle);
+				startActivity(intent);
+			}
+		});
 	}
 
 	private void getDetailById(final String nome) {

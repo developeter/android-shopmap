@@ -1,6 +1,6 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/LinearLayout1"
+    android:id="@+id/ScrollView1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -11,6 +11,7 @@
     tools:context="com.projectgroup.shopmap.GalleryActivity" >
 
     <LinearLayout
+        android:id="@+id/ll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -32,31 +33,40 @@
 
         <ImageView
             android:id="@+id/img1"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:layout_weight="1"
+            android:layout_margin="2dp"
             android:src="@android:drawable/gallery_thumb" />
 
         <ImageView
             android:id="@+id/img2"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:layout_weight="1"
+            android:layout_margin="2dp"
             android:src="@android:drawable/gallery_thumb" />
 
         <ImageView
             android:id="@+id/img3"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:layout_weight="1"
+            android:layout_margin="2dp"
             android:src="@android:drawable/gallery_thumb" />
 
         <ImageView
             android:id="@+id/img4"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:layout_weight="1"
+            android:layout_margin="2dp"
             android:src="@android:drawable/gallery_thumb" />
+
     </LinearLayout>
 
-</LinearLayout>
+</ScrollView>
