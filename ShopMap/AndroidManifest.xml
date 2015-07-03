@@ -9,7 +9,7 @@
         android:required="true" />
 
     <uses-sdk
-        android:minSdkVersion="21"
+        android:minSdkVersion="16"
         android:targetSdkVersion="22" />
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -54,10 +54,7 @@
             android:name=".ActivityLista"
             android:label="@string/title_activity_activity_lista" >
         </activity>
-        <activity
-            android:name=".ProvaImmagine"
-            android:label="@string/title_activity_prova_immagine" >
-        </activity>
+        
     </application>
-
+    
 </manifest>

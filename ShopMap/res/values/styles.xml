@@ -18,7 +18,11 @@
     </style>
     -->
 	  <!-- your theme inherits from the material theme -->
-  <style name="AppTheme" parent="android:Theme.Material">
+  <style name="AppTheme" parent="@style/Theme.AppCompat.Light.DarkActionBar">
     <!-- theme customizations -->
+    
+    <item name="colorPrimary">@color/my_primary</item>
+	<item name="colorPrimaryDark">@color/my_primary_dark</item>
+	<item name="colorAccent">@color/my_accent</item>
   </style>
 </resources>
